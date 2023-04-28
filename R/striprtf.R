@@ -40,7 +40,7 @@
 #'
 read_rtf <- function(file, verbose = FALSE,
                      row_start = "*| ", row_end = "", cell_end = " | ", ignore_tables=FALSE,
-                     check_file=TRUE,
+                     check_file=TRUE, destinations = .destinations,
                      ...)
 {
   stopifnot(is.character(file))
@@ -53,7 +53,7 @@ read_rtf <- function(file, verbose = FALSE,
 
   readLines(file, warn = FALSE, ...) %>%
     paste0(collapse = "\n") %>%
-    strip_rtf(verbose, row_start, row_end, cell_end, ignore_tables)
+    strip_rtf(destinations, verbose, row_start, row_end, cell_end, ignore_tables)
 }
 
 
@@ -68,7 +68,7 @@ read_rtf <- function(file, verbose = FALSE,
 #' @rdname read_rtf
 #' @param text  Character of length 1.  Expected to be contents of an RTF file.
 #' @export
-strip_rtf <- function(text, verbose = FALSE,
+strip_rtf <- function(text, destinations, verbose = FALSE,
                       row_start = "*| ", row_end = "", cell_end = " | ", ignore_tables=FALSE)
 {
   stopifnot(is.character(text))
@@ -114,7 +114,7 @@ strip_rtf <- function(text, verbose = FALSE,
 
   # use c++ helper function to parse
   parsed <- strip_helper(match_mat,
-                         dest_names = .destinations,
+                         dest_names = destinations,
                          special_keys = keys,
                          special_hex  = hexstr,
                          verbose = verbose)
