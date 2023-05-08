@@ -13,11 +13,13 @@ read_rtf(
   cell_end = " | ",
   ignore_tables = FALSE,
   check_file = TRUE,
+  destinations = .destinations,
   ...
 )
 
 strip_rtf(
   text,
+  destinations,
   verbose = FALSE,
   row_start = "*| ",
   row_end = "",

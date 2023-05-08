@@ -2,6 +2,9 @@
 
 export(looks_rtf)
 export(read_rtf)
+export(read_rtf_footer)
+export(read_rtf_header)
+export(read_until)
 export(rtf2text)
 export(strip_rtf)
 export(striprtf)
