@@ -95,6 +95,10 @@ strip_rtf <- function(text, destinations, verbose = FALSE,
     "\\\\([a-z]{1,32})(-?\\d{1,10})?[ ]?|\\\\'([0-9a-f]{2})|\\\\([^a-z])|([{}])|[\r\n]+|(.)",
     ignore_case = TRUE)
 
+  # Tag the superscripting
+  text = stringr::str_replace_all(text, '\\\\super\\{(.)\\}', '<sup>\\1</sup>')
+  text = stringr::str_replace_all(text, '\\{\\\\super (.)\\}', '<sup>\\1</sup>')
+
   match_mat <- stringr::str_match_all(text, pattern)[[1]]
   if (nrow(match_mat) == 0) return(character(0))
   # str_match_all now returns NAs for unmatched optional groups
