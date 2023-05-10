@@ -154,7 +154,8 @@ strip_rtf <- function(text, destinations, verbose = FALSE,
       strsplit("\n") %>%
       unlist()
     regx <- sprintf("[%s]", paste0(tmp_rep_str, collapse = ""))
-    out <- gsub(regx, "", out)
+    out <- gsub(regx, "\n", out)
+    out <- gsub("\n\n", "\n", out)
     return(out)
   }
   #print(out)
