@@ -100,7 +100,9 @@ strip_rtf <- function(text, destinations, verbose = FALSE,
   text = stringr::str_replace_all(text, '\\{\\\\super (.)\\}', '<sup>\\1</sup>')
 
   # Tag the indentation of a cell
-  text = stringr::str_replace_all(text, '\\{\\\\li[\\-]?[0-9]+\\\\fi[\\-]?[0-9]+', '{  ')
+  if(ignore_tables) {
+    text = stringr::str_replace_all(text, '\\{\\\\li[\\-]?[0-9]+\\\\fi[\\-]?[0-9]+', '{  ')
+  }
 
   match_mat <- stringr::str_match_all(text, pattern)[[1]]
   if (nrow(match_mat) == 0) return(character(0))
