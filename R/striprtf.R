@@ -96,12 +96,28 @@ strip_rtf <- function(text, destinations, verbose = FALSE,
     ignore_case = TRUE)
 
   # Tag the superscripting
-  text = stringr::str_replace_all(text, '\\\\super\\{(.)\\}', '<sup>\\1</sup>')
-  text = stringr::str_replace_all(text, '\\{\\\\super (.)\\}', '<sup>\\1</sup>')
+  text = stringr::str_replace_all(text, '\\\\super\\{([^\\}]*)\\}', '<sup>\\1</sup>')
+  text = stringr::str_replace_all(text, '\\{\\\\super ([^\\}]*)\\}', '<sup>\\1</sup>')
+  text = stringr::str_replace_all(text, '(\\{[0-9a-z\\\\ ]*\\\\super[0-9a-z\\\\ ]*) ([A-Za-z0-9\\[\\]]*)\\}', '\\1 <sup>\\2</sup>}')
 
   # Tag the indentation of a cell
-  if(ignore_tables) {
-    text = stringr::str_replace_all(text, '\\{\\\\li[\\-]?[0-9]+\\\\fi[\\-]?[0-9]+', '{  ')
+  if(!ignore_tables) {
+    all_indentations = tibble::tibble(
+        indent_text = stringr::str_extract_all(text,'(\\\\li[\\-]?[0-9]+)[^0-9]') |> unlist() |> unique()
+      ) |>
+      dplyr::mutate(
+        e_size = stringr::str_extract(indent_text,'[0-9]+') |> as.integer()
+      ) |>
+      dplyr::arrange(e_size) |>
+      dplyr::filter(e_size > 0)
+    if(nrow(all_indentations) > 0) {
+      for(i in 1:nrow(all_indentations)) {
+        # Increasingly replace with more "tabs" (2 spaces)
+        row_i = all_indentations |> dplyr::slice(i)
+        indent_text_to_replace = stringr::str_extract(all_indentations[i,"indent_text"],'(\\\\li[\\-]?[0-9]+)[^0-9]', group=1)
+        text = stringr::str_replace_all(text, indent_text_to_replace, stringr::str_c(rep(" ",2*i), collapse=""))
+      }
+    }
   }
 
   match_mat <- stringr::str_match_all(text, pattern)[[1]]
